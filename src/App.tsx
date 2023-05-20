@@ -47,7 +47,6 @@ function App() {
     }),
     [blocks, values?.edges]
   );
-  console.log(options, data);
 
   return (
     <>
