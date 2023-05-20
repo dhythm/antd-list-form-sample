@@ -14,17 +14,66 @@ import {
   PlusCircleOutlined,
   ArrowRightOutlined,
 } from "@ant-design/icons";
+import { useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
   const [form] = Form.useForm();
   const values = Form.useWatch([], form);
-  const options = values?.blocks?.filter((v) => v.block) ?? [];
+  // const options = values?.blocks?.filter((v) => v.name) ?? [];
+  const options = useMemo(
+    () =>
+      values?.blocks?.flatMap((v) =>
+        v?.name
+          ? {
+              label: v?.name,
+              value: uuidv4(),
+            }
+          : []
+      ),
+    [values?.blocks]
+  );
+
+  console.log(values, options);
+  console.log(
+    options?.find((o) => o.label === "農林水産省"),
+    options?.find((o) => o.label === "全国農業会議所")
+  );
 
   return (
     <Form
       form={form}
       name="dynamic_form_item"
-      initialValues={{ blocks: [{ items: [""] }], flows: [""] }}
+      initialValues={{
+        blocks: [
+          { name: "農林水産省", items: [{}] },
+          {
+            name: "全国農業会議所",
+            items: [{ name: "一般社団法人全国農業会議所" }],
+          },
+          {
+            name: "都道府県",
+            items: [
+              { name: "熊本県" },
+              { name: "北海道" },
+              { name: "鹿児島県" },
+              { name: "青森県" },
+              { name: "福岡県" },
+              { name: "長野県" },
+              { name: "愛媛県" },
+              { name: "山形県" },
+              { name: "沖縄県" },
+              { name: "宮崎県" },
+            ],
+          },
+          {
+            name: "",
+            items: [""],
+          },
+        ],
+        // edges: [{ from: "農林水産省", to: "全国農業会議所" }, {}],
+        edges: [{}],
+      }}
       onFinish={(values) => console.log(values)}
       style={{ maxWidth: 600 }}
     >
@@ -39,7 +88,7 @@ function App() {
                       <Space align="baseline">
                         <Form.Item
                           {...field}
-                          name={[field.name, "block"]}
+                          name={[field.name, "name"]}
                           rules={[{ required: true, whitespace: true }]}
                           noStyle
                         >
@@ -68,8 +117,8 @@ function App() {
                                   >
                                     <Form.Item
                                       {..._field}
-                                      name={[_field.name, "item"]}
-                                      fieldId={[_field.fieldKey, "item"]}
+                                      name={[_field.name, "name"]}
+                                      // fieldId={[_field.fieldKey, "name"]}
                                       key={idx}
                                       style={{ margin: 0 }}
                                     >
@@ -100,27 +149,27 @@ function App() {
           }}
         </Form.List>
 
-        <Card title="Relationship">
-          <Form.List name="flows">
+        <Card title="Edges">
+          <Form.List name="edges">
             {(fields, { add, remove }, { errors }) => {
               return (
                 <Space direction="vertical">
                   {fields.map((field, index) => (
                     <Form.Item noStyle>
-                      <Space key={`flows-${field.key}`} align="baseline">
+                      <Space key={`edges-${field.key}`} align="baseline">
                         <Form.Item
                           {...field}
                           name={[field.name, "from"]}
                           style={{ margin: 0 }}
                         >
                           <Select
-                            disabled={options.length === 0}
+                            disabled={options?.length === 0}
                             style={{ width: 130 }}
                           >
-                            {options.map((option, idx) => {
+                            {options?.map((option, idx) => {
                               return (
-                                <Select.Option key={idx} value={option.block}>
-                                  {option.block}
+                                <Select.Option key={idx} value={option.value}>
+                                  {option.label}
                                 </Select.Option>
                               );
                             })}
@@ -133,13 +182,13 @@ function App() {
                           style={{ margin: 0 }}
                         >
                           <Select
-                            disabled={options.length === 0}
+                            disabled={options?.length === 0}
                             style={{ width: 130 }}
                           >
-                            {options.map((option, idx) => {
+                            {options?.map((option, idx) => {
                               return (
-                                <Select.Option key={idx} value={option.block}>
-                                  {option.block}
+                                <Select.Option key={idx} value={option.value}>
+                                  {option.label}
                                 </Select.Option>
                               );
                             })}
@@ -167,7 +216,9 @@ function App() {
           </Button>
         </Form.Item>
 
-        <Typography>{JSON.stringify(values)}</Typography>
+        <Card>
+          <Typography>{JSON.stringify(values)}</Typography>
+        </Card>
       </Space>
     </Form>
   );
