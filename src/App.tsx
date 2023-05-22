@@ -11,7 +11,10 @@ import { FlowAnalysisGraph } from "@ant-design/graphs";
 function App() {
   const [form] = Form.useForm();
   const values = Form.useWatch<
-    | { blocks: { name: string; items: { name: string }[] }[]; edges: any[] }
+    | {
+        blocks: { name: string; overview: string; items: { name: string }[] }[];
+        edges: any[];
+      }
     | undefined
   >([], form);
 
@@ -20,8 +23,9 @@ function App() {
       (values?.blocks ?? []).flatMap((block) =>
         block?.name
           ? {
-              id: uuidv4() as string,
               ...block,
+              id: uuidv4() as string,
+              items: [{ text: block.overview }],
             }
           : []
       ),
@@ -39,6 +43,7 @@ function App() {
         id: block.id,
         value: {
           title: block.name,
+          items: block.items,
         },
       })),
       edges: values?.edges.flatMap((edge) =>
@@ -455,10 +460,12 @@ const initialValues = {
     { name: "農林水産省", items: [{}] },
     {
       name: "（一社）全国農業会議所",
+      overview: "14,911百万円\n就農に向けて研修を受ける者に対して資金を交付",
       items: [{ name: "一般社団法人全国農業会議所" }],
     },
     {
       name: "都道府県（47都道府県）",
+      overview: "14,746百万円",
       items: [
         { name: "熊本県" },
         { name: "北海道" },
@@ -474,6 +481,7 @@ const initialValues = {
     },
     {
       name: "育成センター",
+      overview: "757百万円",
       items: [
         { name: "（公財）北海道農業公社" },
         { name: "（公社）大分県農業農村振興公社" },
@@ -489,6 +497,7 @@ const initialValues = {
     },
     {
       name: "市町村（1,284市町村）",
+      overview: "13,217百万円",
       items: [
         { name: "弘前市" },
         { name: "宮崎市" },
@@ -504,10 +513,12 @@ const initialValues = {
     },
     {
       name: "（一社）全国農業会議所",
+      overview: "88百万円",
       items: [{ name: "（一社）全国農業会議所" }],
     },
     {
       name: "（公社）日本農業法人協会",
+      overview: "20百万円",
       items: [
         {
           name: "（公社）日本農業法人協会",
@@ -516,6 +527,7 @@ const initialValues = {
     },
     {
       name: "（株）ツナグ・マッチングサクセス",
+      overview: "72百万円",
       items: [{ name: "（株）ツナグ・マッチングサクセス" }],
     },
   ],
