@@ -1,4 +1,4 @@
-import { Card, Collapse, Form, Input, Select, Space, Typography } from "antd";
+import { Card, Col, Collapse, Form, Input, Row, Select, Space } from "antd";
 import {
   MinusCircleOutlined,
   PlusCircleOutlined,
@@ -42,7 +42,7 @@ function App() {
         },
       })),
       edges: values?.edges.flatMap((edge) =>
-        edge ? { source: edge.from, target: edge.to } : []
+        edge ? { source: edge.from, target: edge.to, value: edge.memo } : []
       ),
     }),
     [blocks, values?.edges]
@@ -52,237 +52,307 @@ function App() {
     <>
       <Form
         form={form}
+        layout="vertical"
         name="dynamic_form_item"
-        initialValues={{
-          blocks: [
-            { name: "農林水産省", items: [{}] },
-            {
-              name: "（一社）全国農業会議所",
-              items: [{ name: "一般社団法人全国農業会議所" }],
-            },
-            {
-              name: "都道府県（47都道府県）",
-              items: [
-                { name: "熊本県" },
-                { name: "北海道" },
-                { name: "鹿児島県" },
-                { name: "青森県" },
-                { name: "福岡県" },
-                { name: "長野県" },
-                { name: "愛媛県" },
-                { name: "山形県" },
-                { name: "沖縄県" },
-                { name: "宮崎県" },
-              ],
-            },
-            {
-              name: "育成センター",
-              items: [
-                { name: "（公財）北海道農業公社" },
-                { name: "（公社）大分県農業農村振興公社" },
-                { name: "（公社）宮崎県農業振興公社" },
-                { name: "（公財）長崎県農林水産業担い手育成基金" },
-                { name: "（公社）あおもり農林業支援センター" },
-                { name: "（公社）えひめ農林漁業振興機構" },
-                { name: "（一社）岐阜県農畜産公社" },
-                { name: "（公社）みやぎ農業振興公社" },
-                { name: "（公財）福島県農業振興公社" },
-                { name: "（公社）秋田県農業公社" },
-              ],
-            },
-            {
-              name: "市町村（1,284市町村）",
-              items: [
-                { name: "弘前市" },
-                { name: "宮崎市" },
-                { name: "八代市" },
-                { name: "浜松市" },
-                { name: "松山市" },
-                { name: "熊本市" },
-                { name: "阿波市" },
-                { name: "八女市" },
-                { name: "阿蘇市" },
-                { name: "鶴岡市" },
-              ],
-            },
-            {
-              name: "（一社）全国農業会議所",
-              items: [{ name: "（一社）全国農業会議所" }],
-            },
-            {
-              name: "（公社）日本農業法人協会",
-              items: [
-                {
-                  name: "（公社）日本農業法人協会",
-                },
-              ],
-            },
-            {
-              name: "（株）ツナグ・マッチングサクセス",
-              items: [{ name: "（株）ツナグ・マッチングサクセス" }],
-            },
-          ],
-          edges: [{}],
-        }}
+        initialValues={initialValues}
         onFinish={(values) => console.log(values)}
-        style={{ maxWidth: 600 }}
+        // style={{ maxWidth: 600 }}
       >
-        <Space direction="vertical">
-          <Form.List name="blocks">
-            {(fields, { add, remove }, { errors }) => {
-              return (
-                <Space direction="vertical">
-                  {fields.map((field, index) => (
-                    <Card
-                      title={`Node ${index + 1}`}
-                      bodyStyle={{ padding: 12 }}
-                    >
-                      <Form.Item key={`blocks-${field.key}`} noStyle>
-                        <Collapse expandIconPosition="right" size="small" ghost>
-                          <Collapse.Panel
-                            key={`blocks-${field.key}`}
-                            header={
-                              <Space align="baseline">
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, "name"]}
-                                  rules={[{ required: true, whitespace: true }]}
-                                  noStyle
-                                >
-                                  <Input style={{ width: "100%" }} />
-                                </Form.Item>
-                                {fields.length > 1 &&
-                                fields.length - 1 !== index ? (
-                                  <MinusCircleOutlined
-                                    onClick={() => remove(field.name)}
-                                  />
-                                ) : (
-                                  <PlusCircleOutlined
-                                    onClick={() => add({ items: [""] })}
-                                  />
-                                )}
-                              </Space>
-                            }
-                          >
-                            <Form.Item>
-                              <Form.List name={[field.name, "items"]}>
-                                {(_fields, { add: _add, remove: _remove }) => {
-                                  return (
-                                    <Space direction="vertical" size="small">
-                                      {_fields.map((_field, idx) => (
-                                        <Space
-                                          key={`items-${_field.key}`}
-                                          align="baseline"
-                                          style={{ marginLeft: 24 }}
-                                        >
-                                          <Form.Item
-                                            {..._field}
-                                            name={[_field.name, "name"]}
-                                            // fieldId={[_field.fieldKey, "name"]}
-                                            key={idx}
-                                            style={{ margin: 0 }}
-                                          >
-                                            <Input style={{ width: "100%" }} />
-                                          </Form.Item>
-                                          {_fields.length > 1 &&
-                                          _fields.length - 1 !== idx ? (
-                                            <MinusCircleOutlined
-                                              onClick={() =>
-                                                _remove(_field.name)
-                                              }
-                                            />
-                                          ) : (
-                                            <PlusCircleOutlined
-                                              onClick={() => _add()}
-                                            />
-                                          )}
-                                        </Space>
-                                      ))}
-                                    </Space>
-                                  );
-                                }}
-                              </Form.List>
-                            </Form.Item>
-                          </Collapse.Panel>
-                        </Collapse>
-                      </Form.Item>
-                    </Card>
-                  ))}
-                </Space>
-              );
-            }}
-          </Form.List>
-
-          <Card title="Edges">
-            <Form.List name="edges">
+        <Row gutter={[8, 8]}>
+          <Col span={24}>
+            <Form.List name="blocks">
               {(fields, { add, remove }, { errors }) => {
                 return (
-                  <Space direction="vertical">
+                  <Row gutter={[8, 8]}>
                     {fields.map((field, index) => (
-                      <Form.Item noStyle>
-                        <Space key={`edges-${field.key}`} align="baseline">
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "from"]}
-                            style={{ margin: 0 }}
-                          >
-                            <Select
-                              disabled={options?.length === 0}
-                              style={{ width: 130 }}
+                      <Col span={24}>
+                        <Card
+                          title={`Node ${index + 1}`}
+                          bodyStyle={{ padding: 12 }}
+                        >
+                          <Form.Item key={`blocks-${field.key}`} noStyle>
+                            <Collapse
+                              expandIconPosition="right"
+                              size="small"
+                              ghost
                             >
-                              {options?.map((option, idx) => {
-                                return (
-                                  <Select.Option key={idx} value={option.value}>
-                                    {option.label}
-                                  </Select.Option>
-                                );
-                              })}
-                            </Select>
+                              <Collapse.Panel
+                                key={`blocks-${field.key}`}
+                                header={
+                                  <Space align="baseline">
+                                    <Form.Item
+                                      {...field}
+                                      label="支出先"
+                                      name={[field.name, "name"]}
+                                      // rules={[{ required: true, whitespace: true }]}
+                                      // noStyle
+                                    >
+                                      <Input />
+                                    </Form.Item>
+                                    <Form.Item
+                                      {...field}
+                                      label="概要"
+                                      name={[field.name, "overview"]}
+                                    >
+                                      <Input />
+                                    </Form.Item>
+                                    {fields.length > 1 &&
+                                    fields.length - 1 !== index ? (
+                                      <MinusCircleOutlined
+                                        onClick={() => remove(field.name)}
+                                      />
+                                    ) : (
+                                      <PlusCircleOutlined
+                                        onClick={() => add({ items: [""] })}
+                                      />
+                                    )}
+                                  </Space>
+                                }
+                              >
+                                <Form.Item>
+                                  <Form.List name={[field.name, "items"]}>
+                                    {(
+                                      _fields,
+                                      { add: _add, remove: _remove }
+                                    ) => {
+                                      return (
+                                        <Space
+                                          direction="vertical"
+                                          size="small"
+                                        >
+                                          {_fields.map((_field, idx) => (
+                                            <Space
+                                              key={`items-${_field.key}`}
+                                              align="baseline"
+                                            >
+                                              <Form.Item
+                                                {..._field}
+                                                label="名称"
+                                                name={[_field.name, "name"]}
+                                                style={{ margin: 0 }}
+                                              >
+                                                <Input />
+                                              </Form.Item>
+                                              <Form.Item
+                                                {..._field}
+                                                label="法人番号"
+                                                name={[
+                                                  _field.name,
+                                                  "corporateNumber",
+                                                ]}
+                                                style={{ margin: 0 }}
+                                              >
+                                                <Input />
+                                              </Form.Item>
+                                              <Form.Item
+                                                {..._field}
+                                                label="業務概要"
+                                                name={[_field.name, "overview"]}
+                                                style={{ margin: 0 }}
+                                              >
+                                                <Input />
+                                              </Form.Item>
+                                              <Form.Item
+                                                {..._field}
+                                                label="支出額"
+                                                name={[_field.name, "amount"]}
+                                                style={{ margin: 0 }}
+                                              >
+                                                <Input />
+                                              </Form.Item>
+                                              <Form.Item
+                                                {..._field}
+                                                label="契約方式等"
+                                                name={[
+                                                  _field.name,
+                                                  "contractMethod",
+                                                ]}
+                                                style={{
+                                                  margin: 0,
+                                                  width: 200,
+                                                }}
+                                              >
+                                                <Select
+                                                  options={[
+                                                    {
+                                                      label:
+                                                        "一般競争契約（最低価格）",
+                                                      value: "01",
+                                                    },
+                                                    {
+                                                      label:
+                                                        "一般競争契約（総合評価）",
+                                                      value: "02",
+                                                    },
+                                                    {
+                                                      label:
+                                                        "指名競争契約（最低価格）",
+                                                      value: "03",
+                                                    },
+                                                    {
+                                                      label:
+                                                        "指名競争契約（総合評価）",
+                                                      value: "04",
+                                                    },
+                                                    {
+                                                      label:
+                                                        "随意契約（企画競争）",
+                                                      value: "05",
+                                                    },
+                                                    {
+                                                      label: "随意契約（公募）",
+                                                      value: "06",
+                                                    },
+                                                    {
+                                                      label: "随意契約（少額）",
+                                                      value: "07",
+                                                    },
+                                                    {
+                                                      label:
+                                                        "随意契約（その他）",
+                                                      value: "08",
+                                                    },
+                                                    {
+                                                      label: "補助金等交付",
+                                                      value: "09",
+                                                    },
+                                                    {
+                                                      label: "運営費交付金交付",
+                                                      value: "10",
+                                                    },
+                                                    {
+                                                      label:
+                                                        "国庫債務負担行為等",
+                                                      value: "11",
+                                                    },
+                                                    {
+                                                      label: "その他",
+                                                      value: "12",
+                                                    },
+                                                  ]}
+                                                />
+                                              </Form.Item>
+                                              {_fields.length > 1 &&
+                                              _fields.length - 1 !== idx ? (
+                                                <MinusCircleOutlined
+                                                  onClick={() =>
+                                                    _remove(_field.name)
+                                                  }
+                                                />
+                                              ) : (
+                                                <PlusCircleOutlined
+                                                  onClick={() => _add()}
+                                                />
+                                              )}
+                                            </Space>
+                                          ))}
+                                        </Space>
+                                      );
+                                    }}
+                                  </Form.List>
+                                </Form.Item>
+                              </Collapse.Panel>
+                            </Collapse>
                           </Form.Item>
-                          <ArrowRightOutlined />
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "to"]}
-                            style={{ margin: 0 }}
-                          >
-                            <Select
-                              disabled={options?.length === 0}
-                              style={{ width: 130 }}
-                            >
-                              {options?.map((option, idx) => {
-                                return (
-                                  <Select.Option key={idx} value={option.value}>
-                                    {option.label}
-                                  </Select.Option>
-                                );
-                              })}
-                            </Select>
-                          </Form.Item>
-                          {fields.length > 1 && fields.length - 1 !== index ? (
-                            <MinusCircleOutlined
-                              onClick={() => remove(field.name)}
-                            />
-                          ) : (
-                            <PlusCircleOutlined onClick={() => add()} />
-                          )}
-                        </Space>
-                      </Form.Item>
+                        </Card>
+                      </Col>
                     ))}
-                  </Space>
+                  </Row>
                 );
               }}
             </Form.List>
-          </Card>
+          </Col>
 
-          {/*
+          <Col span={24}>
+            <Card title="Edges">
+              <Form.List name="edges">
+                {(fields, { add, remove }, { errors }) => {
+                  return (
+                    <Space direction="vertical">
+                      {fields.map((field, index) => (
+                        <Form.Item noStyle>
+                          <Space key={`edges-${field.key}`} align="baseline">
+                            <Form.Item
+                              {...field}
+                              label="支払い元"
+                              name={[field.name, "from"]}
+                              style={{ margin: 0 }}
+                            >
+                              <Select
+                                disabled={options?.length === 0}
+                                style={{ width: 200 }}
+                              >
+                                {options?.map((option, idx) => {
+                                  return (
+                                    <Select.Option
+                                      key={idx}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </Form.Item>
+                            <ArrowRightOutlined />
+                            <Form.Item
+                              {...field}
+                              label="支払い先"
+                              name={[field.name, "to"]}
+                              style={{ margin: 0 }}
+                            >
+                              <Select
+                                disabled={options?.length === 0}
+                                style={{ width: 200 }}
+                              >
+                                {options?.map((option, idx) => {
+                                  return (
+                                    <Select.Option
+                                      key={idx}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </Select.Option>
+                                  );
+                                })}
+                              </Select>
+                            </Form.Item>
+                            <Form.Item
+                              {...field}
+                              label="補足"
+                              name={[field.name, "memo"]}
+                              style={{ marginLeft: 12 }}
+                            >
+                              <Input />
+                            </Form.Item>
+                            {fields.length > 1 &&
+                            fields.length - 1 !== index ? (
+                              <MinusCircleOutlined
+                                onClick={() => remove(field.name)}
+                              />
+                            ) : (
+                              <PlusCircleOutlined onClick={() => add()} />
+                            )}
+                          </Space>
+                        </Form.Item>
+                      ))}
+                    </Space>
+                  );
+                }}
+              </Form.List>
+            </Card>
+          </Col>
+        </Row>
+
+        {/*
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>
           */}
-        </Space>
       </Form>
+
       <Card style={{ marginTop: 24 }}>
         {/* <Typography>{JSON.stringify(values)}</Typography> */}
         <FlowAnalysisGraph
@@ -363,6 +433,9 @@ function App() {
                 strokeOpacity: 1,
               },
             },
+            endArrow: {
+              show: true,
+            },
           }}
           markerCfg={(cfg) => {
             const { edges } = data ?? {};
@@ -376,5 +449,77 @@ function App() {
     </>
   );
 }
+
+const initialValues = {
+  blocks: [
+    { name: "農林水産省", items: [{}] },
+    {
+      name: "（一社）全国農業会議所",
+      items: [{ name: "一般社団法人全国農業会議所" }],
+    },
+    {
+      name: "都道府県（47都道府県）",
+      items: [
+        { name: "熊本県" },
+        { name: "北海道" },
+        { name: "鹿児島県" },
+        { name: "青森県" },
+        { name: "福岡県" },
+        { name: "長野県" },
+        { name: "愛媛県" },
+        { name: "山形県" },
+        { name: "沖縄県" },
+        { name: "宮崎県" },
+      ],
+    },
+    {
+      name: "育成センター",
+      items: [
+        { name: "（公財）北海道農業公社" },
+        { name: "（公社）大分県農業農村振興公社" },
+        { name: "（公社）宮崎県農業振興公社" },
+        { name: "（公財）長崎県農林水産業担い手育成基金" },
+        { name: "（公社）あおもり農林業支援センター" },
+        { name: "（公社）えひめ農林漁業振興機構" },
+        { name: "（一社）岐阜県農畜産公社" },
+        { name: "（公社）みやぎ農業振興公社" },
+        { name: "（公財）福島県農業振興公社" },
+        { name: "（公社）秋田県農業公社" },
+      ],
+    },
+    {
+      name: "市町村（1,284市町村）",
+      items: [
+        { name: "弘前市" },
+        { name: "宮崎市" },
+        { name: "八代市" },
+        { name: "浜松市" },
+        { name: "松山市" },
+        { name: "熊本市" },
+        { name: "阿波市" },
+        { name: "八女市" },
+        { name: "阿蘇市" },
+        { name: "鶴岡市" },
+      ],
+    },
+    {
+      name: "（一社）全国農業会議所",
+      items: [{ name: "（一社）全国農業会議所" }],
+    },
+    {
+      name: "（公社）日本農業法人協会",
+      items: [
+        {
+          name: "（公社）日本農業法人協会",
+        },
+      ],
+    },
+    {
+      name: "（株）ツナグ・マッチングサクセス",
+      items: [{ name: "（株）ツナグ・マッチングサクセス" }],
+    },
+  ],
+  edges: [{}],
+};
 
 export default App;
