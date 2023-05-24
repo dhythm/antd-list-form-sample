@@ -1,10 +1,20 @@
-import { Card, Col, Collapse, Form, Input, Row, Select, Space } from "antd";
+import {
+  Card,
+  Col,
+  Collapse,
+  Form,
+  Input,
+  Row,
+  Select,
+  Space,
+  Table,
+} from "antd";
 import {
   MinusCircleOutlined,
   PlusCircleOutlined,
   ArrowRightOutlined,
 } from "@ant-design/icons";
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { FlowAnalysisGraph } from "@ant-design/graphs";
 
@@ -115,146 +125,9 @@ function App() {
                                 }
                               >
                                 <Form.Item>
-                                  <Form.List name={[field.name, "items"]}>
-                                    {(
-                                      _fields,
-                                      { add: _add, remove: _remove }
-                                    ) => {
-                                      return (
-                                        <Space
-                                          direction="vertical"
-                                          size="small"
-                                        >
-                                          {_fields.map((_field, idx) => (
-                                            <Space
-                                              key={`items-${_field.key}`}
-                                              align="baseline"
-                                            >
-                                              <Form.Item
-                                                {..._field}
-                                                label="名称"
-                                                name={[_field.name, "name"]}
-                                                style={{ margin: 0 }}
-                                              >
-                                                <Input />
-                                              </Form.Item>
-                                              <Form.Item
-                                                {..._field}
-                                                label="法人番号"
-                                                name={[
-                                                  _field.name,
-                                                  "corporateNumber",
-                                                ]}
-                                                style={{ margin: 0 }}
-                                              >
-                                                <Input />
-                                              </Form.Item>
-                                              <Form.Item
-                                                {..._field}
-                                                label="業務概要"
-                                                name={[_field.name, "overview"]}
-                                                style={{ margin: 0 }}
-                                              >
-                                                <Input />
-                                              </Form.Item>
-                                              <Form.Item
-                                                {..._field}
-                                                label="支出額"
-                                                name={[_field.name, "amount"]}
-                                                style={{ margin: 0 }}
-                                              >
-                                                <Input />
-                                              </Form.Item>
-                                              <Form.Item
-                                                {..._field}
-                                                label="契約方式等"
-                                                name={[
-                                                  _field.name,
-                                                  "contractMethod",
-                                                ]}
-                                                style={{
-                                                  margin: 0,
-                                                  width: 200,
-                                                }}
-                                              >
-                                                <Select
-                                                  options={[
-                                                    {
-                                                      label:
-                                                        "一般競争契約（最低価格）",
-                                                      value: "01",
-                                                    },
-                                                    {
-                                                      label:
-                                                        "一般競争契約（総合評価）",
-                                                      value: "02",
-                                                    },
-                                                    {
-                                                      label:
-                                                        "指名競争契約（最低価格）",
-                                                      value: "03",
-                                                    },
-                                                    {
-                                                      label:
-                                                        "指名競争契約（総合評価）",
-                                                      value: "04",
-                                                    },
-                                                    {
-                                                      label:
-                                                        "随意契約（企画競争）",
-                                                      value: "05",
-                                                    },
-                                                    {
-                                                      label: "随意契約（公募）",
-                                                      value: "06",
-                                                    },
-                                                    {
-                                                      label: "随意契約（少額）",
-                                                      value: "07",
-                                                    },
-                                                    {
-                                                      label:
-                                                        "随意契約（その他）",
-                                                      value: "08",
-                                                    },
-                                                    {
-                                                      label: "補助金等交付",
-                                                      value: "09",
-                                                    },
-                                                    {
-                                                      label: "運営費交付金交付",
-                                                      value: "10",
-                                                    },
-                                                    {
-                                                      label:
-                                                        "国庫債務負担行為等",
-                                                      value: "11",
-                                                    },
-                                                    {
-                                                      label: "その他",
-                                                      value: "12",
-                                                    },
-                                                  ]}
-                                                />
-                                              </Form.Item>
-                                              {_fields.length > 1 &&
-                                              _fields.length - 1 !== idx ? (
-                                                <MinusCircleOutlined
-                                                  onClick={() =>
-                                                    _remove(_field.name)
-                                                  }
-                                                />
-                                              ) : (
-                                                <PlusCircleOutlined
-                                                  onClick={() => _add()}
-                                                />
-                                              )}
-                                            </Space>
-                                          ))}
-                                        </Space>
-                                      );
-                                    }}
-                                  </Form.List>
+                                  <TableInputFormList
+                                    name={[field.name, "items"]}
+                                  />
                                 </Form.Item>
                               </Collapse.Panel>
                             </Collapse>
@@ -454,6 +327,144 @@ function App() {
     </>
   );
 }
+
+const TableInputFormList: FC<{ name: any }> = ({ name }) => {
+  return (
+    <Form.List name={name}>
+      {(fields, { add, remove }) => {
+        return (
+          <Table
+            dataSource={fields}
+            columns={[
+              {
+                title: "名称",
+                key: "name",
+                render: (_, field) => (
+                  <Form.Item {...field} name={[field.name, "name"]} noStyle>
+                    <Input />
+                  </Form.Item>
+                ),
+              },
+              {
+                title: "法人番号",
+                key: "corporateNumber",
+                render: (_, field) => (
+                  <Form.Item
+                    {...field}
+                    name={[field.name, "corporateNumber"]}
+                    noStyle
+                  >
+                    <Input />
+                  </Form.Item>
+                ),
+              },
+              {
+                title: "業務概要",
+                key: "overview",
+                render: (_, field) => (
+                  <Form.Item {...field} name={[field.name, "overview"]} noStyle>
+                    <Input />
+                  </Form.Item>
+                ),
+              },
+              {
+                title: "支払額",
+                key: "amount",
+                render: (_, field) => (
+                  <Form.Item {...field} name={[field.name, "amount"]} noStyle>
+                    <Input />
+                  </Form.Item>
+                ),
+              },
+              {
+                title: "契約方式",
+                key: "contractMethod",
+                render: (_, field) => (
+                  <Form.Item
+                    {...field}
+                    name={[field.name, "contractMethod"]}
+                    noStyle
+                  >
+                    <Select
+                      style={{ width: 200 }}
+                      options={[
+                        {
+                          label: "一般競争契約（最低価格）",
+                          value: "01",
+                        },
+                        {
+                          label: "一般競争契約（総合評価）",
+                          value: "02",
+                        },
+                        {
+                          label: "指名競争契約（最低価格）",
+                          value: "03",
+                        },
+                        {
+                          label: "指名競争契約（総合評価）",
+                          value: "04",
+                        },
+                        {
+                          label: "随意契約（企画競争）",
+                          value: "05",
+                        },
+                        {
+                          label: "随意契約（公募）",
+                          value: "06",
+                        },
+                        {
+                          label: "随意契約（少額）",
+                          value: "07",
+                        },
+                        {
+                          label: "随意契約（その他）",
+                          value: "08",
+                        },
+                        {
+                          label: "補助金等交付",
+                          value: "09",
+                        },
+                        {
+                          label: "運営費交付金交付",
+                          value: "10",
+                        },
+                        {
+                          label: "国庫債務負担行為等",
+                          value: "11",
+                        },
+                        {
+                          label: "その他",
+                          value: "12",
+                        },
+                      ]}
+                    />
+                  </Form.Item>
+                ),
+              },
+              {
+                title: "",
+                key: "actions",
+                render: (_, field, idx) => {
+                  return (
+                    <Space>
+                      {fields.length > 1 && (
+                        <MinusCircleOutlined
+                          onClick={() => remove(field.name)}
+                        />
+                      )}
+                      <PlusCircleOutlined onClick={() => add()} />
+                    </Space>
+                  );
+                },
+              },
+            ]}
+            pagination={false}
+          />
+        );
+      }}
+    </Form.List>
+  );
+};
 
 const initialValues = {
   blocks: [
