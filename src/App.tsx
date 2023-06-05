@@ -3,6 +3,7 @@ import {
   Col,
   Collapse,
   Form,
+  FormListFieldData,
   Input,
   Row,
   Select,
@@ -76,86 +77,80 @@ function App() {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.List name="blocks">
-              {(fields, { add, remove }, { errors }) => {
+              {(fields, { add, remove }) => {
                 return (
-                  <Row gutter={[8, 8]}>
-                    {fields.map((field, index) => (
-                      <Col span={24}>
-                        <Card
-                          title={`Node ${index + 1}`}
-                          bodyStyle={{ padding: 12 }}
-                        >
-                          <Form.Item key={`blocks-${field.key}`} noStyle>
-                            <Collapse
-                              expandIconPosition="right"
-                              size="small"
-                              ghost
-                            >
-                              <Collapse.Panel
-                                key={`blocks-${field.key}`}
-                                header={
-                                  <Space align="baseline">
-                                    <Form.Item
-                                      {...field}
-                                      label="支出先"
-                                      name={[field.name, "name"]}
-                                      // rules={[{ required: true, whitespace: true }]}
-                                      // noStyle
-                                    >
-                                      <Input />
-                                    </Form.Item>
-                                    <Form.Item
-                                      {...field}
-                                      label="概要"
-                                      name={[field.name, "overview"]}
-                                    >
-                                      <Input />
-                                    </Form.Item>
-                                    {fields.length > 1 &&
-                                    fields.length - 1 !== index ? (
-                                      <MinusCircleOutlined
-                                        onClick={() => remove(field.name)}
-                                      />
-                                    ) : (
-                                      <PlusCircleOutlined
-                                        onClick={() => add({ items: [""] })}
-                                      />
-                                    )}
-                                  </Space>
-                                }
-                              >
-                                <Form.Item>
-                                  <TableInputFormList
-                                    name={[field.name, "items"]}
-                                  />
-                                </Form.Item>
-                              </Collapse.Panel>
-                            </Collapse>
+                  <Table
+                    dataSource={fields}
+                    columns={[
+                      { title: "支出先", key: "name", dataIndex: "name" },
+                      { title: "概要", key: "overview", dataIndex: "overview" },
+                    ]
+                      .map((column) => ({
+                        render: (
+                          _: unknown,
+                          field: FormListFieldData,
+                          idx: number
+                        ) => (
+                          <Form.Item
+                            {...field}
+                            name={[field.name, column.key ?? ""]}
+                            noStyle
+                          >
+                            <Input />
                           </Form.Item>
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
+                        ),
+                        ...column,
+                      }))
+                      .concat({
+                        title: "",
+                        key: "actions",
+                        render: (
+                          _: unknown,
+                          field: FormListFieldData,
+                          idx: number
+                        ) => (
+                          <Space>
+                            <PlusCircleOutlined
+                              onClick={() => add({ items: [""] }, idx + 1)}
+                            />
+                            {fields.length > 1 && (
+                              <MinusCircleOutlined
+                                onClick={() => remove(field.name)}
+                              />
+                            )}
+                          </Space>
+                        ),
+                      })}
+                    pagination={false}
+                  />
                 );
               }}
             </Form.List>
           </Col>
 
-          <Col span={24}>
-            <Card title="Edges">
-              <Form.List name="edges">
-                {(fields, { add, remove }, { errors }) => {
-                  return (
-                    <Space direction="vertical">
-                      {fields.map((field, index) => (
-                        <Form.Item noStyle>
-                          <Space key={`edges-${field.key}`} align="baseline">
-                            <Form.Item
-                              {...field}
-                              label="支払い元"
-                              name={[field.name, "from"]}
-                              style={{ margin: 0 }}
-                            >
+          <Col>
+            <Form.List name="edges">
+              {(fields, { add, remove }) => {
+                return (
+                  <Table
+                    dataSource={fields}
+                    columns={[
+                      { title: "支払元", key: "from" },
+                      { title: "支払先", key: "to" },
+                      { title: "補足", key: "memo" },
+                    ]
+                      .map((column) => ({
+                        render: (
+                          _: unknown,
+                          field: FormListFieldData,
+                          idx: number
+                        ) => (
+                          <Form.Item
+                            {...field}
+                            name={[field.name, column.key ?? ""]}
+                            noStyle
+                          >
+                            {column.key !== "memo" ? (
                               <Select
                                 disabled={options?.length === 0}
                                 style={{ width: 200 }}
@@ -171,54 +166,38 @@ function App() {
                                   );
                                 })}
                               </Select>
-                            </Form.Item>
-                            <ArrowRightOutlined />
-                            <Form.Item
-                              {...field}
-                              label="支払い先"
-                              name={[field.name, "to"]}
-                              style={{ margin: 0 }}
-                            >
-                              <Select
-                                disabled={options?.length === 0}
-                                style={{ width: 200 }}
-                              >
-                                {options?.map((option, idx) => {
-                                  return (
-                                    <Select.Option
-                                      key={idx}
-                                      value={option.value}
-                                    >
-                                      {option.label}
-                                    </Select.Option>
-                                  );
-                                })}
-                              </Select>
-                            </Form.Item>
-                            <Form.Item
-                              {...field}
-                              label="補足"
-                              name={[field.name, "memo"]}
-                              style={{ marginLeft: 12 }}
-                            >
+                            ) : (
                               <Input />
-                            </Form.Item>
-                            {fields.length > 1 &&
-                            fields.length - 1 !== index ? (
+                            )}
+                          </Form.Item>
+                        ),
+                        ...column,
+                      }))
+                      .concat({
+                        title: "",
+                        key: "actions",
+                        render: (
+                          _: unknown,
+                          field: FormListFieldData,
+                          idx: number
+                        ) => (
+                          <Space>
+                            <PlusCircleOutlined
+                              onClick={() => add({ items: [""] }, idx + 1)}
+                            />
+                            {fields.length > 1 && (
                               <MinusCircleOutlined
                                 onClick={() => remove(field.name)}
                               />
-                            ) : (
-                              <PlusCircleOutlined onClick={() => add()} />
                             )}
                           </Space>
-                        </Form.Item>
-                      ))}
-                    </Space>
-                  );
-                }}
-              </Form.List>
-            </Card>
+                        ),
+                      })}
+                    pagination={false}
+                  />
+                );
+              }}
+            </Form.List>
           </Col>
         </Row>
 
