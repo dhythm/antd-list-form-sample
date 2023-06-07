@@ -121,6 +121,11 @@ function App() {
                           </Space>
                         ),
                       })}
+                    expandable={{
+                      expandedRowRender: (field) => (
+                        <TableInputFormList name={[field.name, "items"]} />
+                      ),
+                    }}
                     pagination={false}
                   />
                 );
@@ -301,6 +306,7 @@ function App() {
               show: edges?.find((item) => item.source === cfg.id),
             };
           }}
+          behaviors={["drag-canvas"]}
         />
       </Card>
     </>
@@ -318,6 +324,7 @@ const TableInputFormList: FC<{ name: any }> = ({ name }) => {
               {
                 title: "名称",
                 key: "name",
+                width: 250,
                 render: (_, field) => (
                   <Form.Item {...field} name={[field.name, "name"]} noStyle>
                     <Input />
